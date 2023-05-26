@@ -388,7 +388,7 @@
                                     "result": {
                                         "summary": "An result object.",
                                         "value": {
-                                            "msg": "Login successfully!",
+                                            "msg": "Fetched successfully!",
                                             "data": {
                                                 "packages": []
                                             }

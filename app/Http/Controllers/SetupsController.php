@@ -50,7 +50,7 @@ class SetupsController extends Controller
      *                 @OA\Schema(type="boolean")
      *             },
      *             @OA\Examples(example="result", value={
-                        "msg": "Login successfully!",
+                        "msg": "Fetched successfully!",
                         "data": {
                             "packages": {}
                         }
@@ -68,6 +68,6 @@ class SetupsController extends Controller
         $data['packages'] = $this->packageRepository->allPackages();
         
         //Return the success reponse
-        return APIresponse::success('Login successfully!', $data);
+        return APIresponse::success('Fetched successfully!', $data);
     }
 }
