@@ -1,0 +1,474 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "i3ePay Apis with example payloads and responses",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "summary": "Login Customer / Vendor",
+                "operationId": "430651bc50d7b618ae8e5281f509e5da",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "robertwilliam@yopmail.com",
+                                    "password": "test1234"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "Login successfully!",
+                                            "data": {
+                                                "access_token": "4|Iy6d8QjKfh7T5YGFP0wYBY4dgJxbKgK2pw6AOLDs",
+                                                "token_type": "Bearer",
+                                                "user": {
+                                                    "id": 3,
+                                                    "firstname": "Robert",
+                                                    "lastname": "William",
+                                                    "email": "robertwilliam@yopmail.com",
+                                                    "phone": null,
+                                                    "address": null,
+                                                    "_role": {
+                                                        "name": "customer",
+                                                        "laravel_through_key": 3
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register/customer": {
+            "post": {
+                "summary": "Register Customer",
+                "operationId": "6b2f9ab4a1f4b9fea36d41200f664c4b",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string"
+                                    },
+                                    "lastname": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "firstname": "New",
+                                    "lastname": "Customer",
+                                    "email": "newcustomer@yopmail.com",
+                                    "phone": "1234567890",
+                                    "address": "Test Address",
+                                    "password": "12345678"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "Customer registered successfully!",
+                                            "data": {
+                                                "access_token": "3|f0xu0g6HB0NT1YBQNDiN2wTxdvYPvTjL3WnyjsHt",
+                                                "token_type": "Bearer",
+                                                "user": {
+                                                    "id": 7,
+                                                    "firstname": "New",
+                                                    "lastname": "Customer",
+                                                    "email": "newcustomer2@yopmail.com",
+                                                    "phone": "1234567890",
+                                                    "address": "Test Address",
+                                                    "_role": {
+                                                        "name": "customer",
+                                                        "laravel_through_key": 7
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register/vendor": {
+            "post": {
+                "summary": "Register Vendor",
+                "operationId": "9ed58f67dba5fc4455698cda46d9f927",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string"
+                                    },
+                                    "lastname": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "category": {
+                                        "type": "string"
+                                    },
+                                    "package_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "firstname": "New",
+                                    "lastname": "Vendor",
+                                    "email": "newvendor@yopmail.com",
+                                    "address": "Test Address",
+                                    "password": "12345678",
+                                    "category": "Grocery Store",
+                                    "package_id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "Vendor registered successfully!",
+                                            "data": {
+                                                "access_token": "5|xt25hgDmApEpqUlLheRtfTcRDcir9LT6FOSDt3fy",
+                                                "token_type": "Bearer",
+                                                "user": {
+                                                    "id": 8,
+                                                    "firstname": "New",
+                                                    "lastname": "Vendor",
+                                                    "email": "newvendor@yopmail.com",
+                                                    "phone": null,
+                                                    "address": "Test Address",
+                                                    "_role": {
+                                                        "name": "vendor",
+                                                        "laravel_through_key": 8
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/changePassword": {
+            "post": {
+                "summary": "Change Password (Vendor / Customer)",
+                "operationId": "a37ac31dd08c6099b071df895ee6d5e0",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "current_password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "password_confirmation": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "current_password": "test1234",
+                                    "password": "test4321",
+                                    "password_confirmation": "test4321"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "Password changed successfully!",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/setup": {
+            "get": {
+                "summary": "Setup Api (open api) to get misc things like packages detail etc.",
+                "operationId": "9112849a9a7b69a4ba272f3ae20d6e56",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "Login successfully!",
+                                            "data": {
+                                                "packages": []
+                                            }
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/allStores": {
+            "post": {
+                "summary": "All stores with filters",
+                "operationId": "d84fe1696cf42e277b0a32afb8b84be1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "search": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "search": ""
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "Fetched successfully!",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}

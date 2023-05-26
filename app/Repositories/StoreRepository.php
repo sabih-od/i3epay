@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Repositories;
+
+use Prettus\Repository\Contracts\RepositoryInterface;
+use App\Models\Store;
+
+/**
+ * Interface StoreRepository.
+ *
+ * @package namespace App\Repositories;
+ */
+interface StoreRepository extends RepositoryInterface
+{
+    public function allStores($request);
+}
