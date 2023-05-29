@@ -366,7 +366,7 @@ class AuthenticationsController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/changePassword",
+     *     path="/api/change-password",
      *     summary="Change Password (Vendor / Customer)",
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(

@@ -45,7 +45,7 @@ class StoresController extends Controller
      */
     /**
      * @OA\Post(
-     *     path="/api/allStores",
+     *     path="/api/all-stores",
      *     summary="All stores with filters",
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(

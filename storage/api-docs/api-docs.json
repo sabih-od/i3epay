@@ -282,10 +282,10 @@
                 }
             }
         },
-        "/api/changePassword": {
+        "/api/change-password": {
             "post": {
                 "summary": "Change Password (Vendor / Customer)",
-                "operationId": "a37ac31dd08c6099b071df895ee6d5e0",
+                "operationId": "3f8b65d17dbeb5e7958cf866191c2379",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -405,10 +405,10 @@
                 }
             }
         },
-        "/api/allStores": {
+        "/api/all-stores": {
             "post": {
                 "summary": "All stores with filters",
-                "operationId": "d84fe1696cf42e277b0a32afb8b84be1",
+                "operationId": "d6644a8250ef26e137e3c5cb9bce67a5",
                 "requestBody": {
                     "content": {
                         "application/json": {
