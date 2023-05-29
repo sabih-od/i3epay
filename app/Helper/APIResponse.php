@@ -16,7 +16,7 @@ class APIResponse
     public static function success(string $msg = '', array $data = []): JsonResponse
     {
         return response()->json([
-            'msg' => $msg,
+            'message' => $msg,
             'data' => $data,
         ]);
     }
@@ -32,7 +32,7 @@ class APIResponse
     public static function error(string $msg, array $data = [], int $status = 422): JsonResponse
     {
         return response()->json([
-            'msg' => $msg,
+            'message' => $msg,
             'data' => $data,
         ], $status);
     }

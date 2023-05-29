@@ -13,4 +13,5 @@ use App\Models\Store;
 interface StoreRepository extends RepositoryInterface
 {
     public function allStores($request);
+    public function customerStoreSubscription($request);
 }

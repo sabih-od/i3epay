@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CustomerSubscriptionUpdateRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class CustomerSubscriptionUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,8 +25,12 @@ class CustomerSubscriptionUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'store_id' => 'required|exists:stores,id',
-            'customer_store_password' => 'required'
+            'store_id' => [ 
+                'required', 
+                'exists:stores,id', 
+                Rule::exists('store_subscriptions', 'store_id')->where('customer_id', auth()->user()->id)
+            ],
+            'customer_store_password' => 'required|min:4|max:4'
         ];
     }
 

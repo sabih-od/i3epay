@@ -27,7 +27,9 @@ Route::post('/register/customer', [AuthenticationsController::class, 'registerCu
 Route::post('/register/vendor', [AuthenticationsController::class, 'registerVendor']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/changePassword', [AuthenticationsController::class, 'changePassword']);
-    Route::post('/allStores', [StoresController::class, 'allStores']);
-    Route::post('/customerStoreSubscription', [StoresController::class, 'customerStoreSubscription']);
+    Route::post('/change-password', [AuthenticationsController::class, 'changePassword']);
+    Route::post('/all-stores', [StoresController::class, 'allStores']);
+    Route::post('/customer-store-subscription', [StoresController::class, 'customerStoreSubscription']);
+    Route::put('/customer-update-store-password', [StoresController::class, 'customerUpdateStorePassword']);
+    Route::post('/customer-view-store-password', [StoresController::class, 'customerViewStorePassword']);
 });

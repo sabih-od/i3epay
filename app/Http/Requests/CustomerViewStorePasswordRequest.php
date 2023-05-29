@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CustomerSubscriptionCreateRequest extends FormRequest
+class CustomerViewStorePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,14 +25,8 @@ class CustomerSubscriptionCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'store_id' => [ 'required', 'exists:stores,id', Rule::unique('store_subscriptions', 'store_id')->where('customer_id', auth()->user()->id)]
+            'store_id' => [ 'required', 'exists:stores,id', Rule::exists('store_subscriptions', 'store_id')->where('customer_id', auth()->user()->id)],
+            'password' => 'required'
         ];
     }
-
-    // protected function failedValidation(Validator $validator)
-    // {
-    //     throw new HttpResponseException(response()->json([
-    //         'errors' => $validator->errors()
-    //     ], 422));
-    // }
 }
