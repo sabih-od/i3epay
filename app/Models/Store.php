@@ -32,4 +32,11 @@ class Store extends Model
     {
         return $this->hasOne(User::class, 'id', 'vendor_id')->role('vendor');
     }
+
+    public function pendingSubscriptionRequests()
+    {
+        return $this->hasMany(StoreSubscription::class, 'store_id', 'id')
+                ->select('id', 'store_id', 'customer_id')
+                ->where('is_accept', 0);
+    }
 }

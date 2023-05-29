@@ -12,6 +12,7 @@ use App\Http\Requests\StoreUpdateRequest;
 use App\Http\Requests\CustomerSubscriptionCreateRequest;
 use App\Http\Requests\CustomerSubscriptionUpdateRequest;
 use App\Http\Requests\CustomerViewStorePasswordRequest;
+use App\Http\Requests\AcceptCustomerRequest;
 use App\Repositories\StoreRepository;
 use App\Helper\APIresponse;
 use Illuminate\Support\Facades\Hash;
@@ -86,16 +87,17 @@ class StoresController extends Controller
         }
     }
 
-    public function customerStoreSubscription(CustomerSubscriptionCreateRequest $request)
+    // for customer
+    public function storeSubscription(CustomerSubscriptionCreateRequest $request)
     {
         try {
             // first will check that this user is customer
             $customer = auth()->user()->hasRole('customer');
 
-            if(!$customer) return APIresponse::error('Customer does not exits!', []);
+            if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
 
             // customer subscribe to the store
-            $data = $this->repository->customerStoreSubscription($request);
+            $data = $this->repository->customerStoreSubscribed($request);
             
             // return response
             return APIresponse::success('Subscribed successfully!', $data->toArray());
@@ -104,13 +106,14 @@ class StoresController extends Controller
         }
     }
 
-    public function customerUpdateStorePassword(CustomerSubscriptionUpdateRequest $request)
+    // for customer
+    public function updateStorePassword(CustomerSubscriptionUpdateRequest $request)
     {
         try {
             // first will check that this user is customer
             $customer = auth()->user()->hasRole('customer');
 
-            if(!$customer) return APIresponse::error('Customer does not exits!', []);
+            if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
 
             // customer subscribe to the store
             $this->repository->customerUpdateStorePassword($request);
@@ -122,7 +125,8 @@ class StoresController extends Controller
         }
     }
 
-    public function customerViewStorePassword(CustomerViewStorePasswordRequest $request)
+    // for customer
+    public function viewStorePassword(CustomerViewStorePasswordRequest $request)
     {
         try {
             // if password match from request password
@@ -135,6 +139,32 @@ class StoresController extends Controller
 
             // return response
             return APIresponse::success('Password viewed!', $data->toArray());
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    public function storeSubscriptionRequests()
+    {
+        try {
+            // fetch subscription request list
+            $data = $this->repository->storeSubscriptionRequests();
+
+            // return response
+            return APIresponse::success('Subsciption requests fetched!', $data->toArray());
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    public function acceptCustomerRequest(AcceptCustomerRequest $request)
+    {
+        try {
+            $data = $this->repository->acceptCustomerRequest($request);
+            if(!$data) return APIresponse::error('Request has wrong data ( store | customer )', []);
+
+            // return response
+            return APIresponse::success('Request has been accepted!', []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }

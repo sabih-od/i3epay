@@ -14,9 +14,12 @@ class CreateStoreSubscriptionsTable extends Migration
     public function up()
     {
         Schema::create('store_subscriptions', function (Blueprint $table) {
+            $table->id();
             $table->integer('store_id')->nullable();
             $table->integer('customer_id')->nullable();
             $table->integer('customer_store_password')->nullable();
+            $table->string('is_accept')->enum('is_accept', ['1', '0'])->default(0);
+            $table->timestamps();
         });
     }
 

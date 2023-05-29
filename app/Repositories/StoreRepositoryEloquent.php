@@ -63,7 +63,7 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
         return $data;
     }
 
-    public function customerStoreSubscription($request)
+    public function customerStoreSubscribed($request)
     {
         // customer send subscription request to the store
         $data = StoreSubscription::create([
@@ -94,6 +94,33 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
                 ->where('store_id', $request->input('store_id'))
                 ->where('customer_id', auth()->user()->id)
                 ->first();
+
+        return $data;
+    }
+
+    public function storeSubscriptionRequests()
+    {
+        $data = Store::select('id', 'name', 'description', 'address', 'store_type_id', 'vendor_id')
+                ->with(['storeType:id,name,slug', 'vendor' => function($query){
+                    $query->select('id', 'firstname', 'lastname', 'email', 'phone', 'address');
+                }, 'pendingSubscriptionRequests', 'pendingSubscriptionRequests.customer'])
+                // if user exists in users table with vendor role 
+                ->whereHas('vendor')
+                ->where('vendor_id', auth()->user()->id);
+
+        $data = $data->get();
+        return $data;
+    }
+
+    public function acceptCustomerRequest($request)
+    {
+        $data = StoreSubscription::query()
+                ->where('id', $request->input('store_subscription_id'))
+                ->whereHas('vendorStore')
+                ->whereHas('customer')
+                ->update([
+                    'is_accept' => 1
+                ]);
 
         return $data;
     }
