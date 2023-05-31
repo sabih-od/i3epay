@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class AcceptCustomerRequest extends FormRequest
+class CustomerUnsubscriptionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +25,7 @@ class AcceptCustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'store_subscription_id' => 'required|exists:store_subscriptions,id',
-            'type' => 'required'
+            'store_id' => [ 'required', 'exists:stores,id', Rule::exists('store_subscriptions', 'store_id')->where('customer_id', auth()->user()->id)]
         ];
     }
 }

@@ -8,6 +8,7 @@ use App\Repositories\StoreRepository;
 use App\Models\Store;
 use App\Models\StoreSubscription;
 use App\Validators\StoreValidator;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class StoreRepositoryEloquent.
@@ -74,6 +75,16 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
         return $data;
     }
 
+    public function customerStoreUnsubscribed()
+    {
+        // customer send to the unsubscription request to the store
+        $data = StoreSubscription::where('is_accept', '1')->where('unsubscribe', '0')->update([
+            'unsubscribe' => '1'
+        ]);
+
+        return $data;
+    }
+
     public function customerUpdateStorePassword($request)
     {
         // customer update store password
@@ -98,12 +109,26 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
         return $data;
     }
 
-    public function storeSubscriptionRequests()
+    // public function storeSubscriptionRequests()
+    // {
+    //     $data = Store::select('id', 'name', 'description', 'address', 'store_type_id', 'vendor_id')
+    //             ->with(['storeType:id,name,slug', 'vendor' => function($query){
+    //                 $query->select('id', 'firstname', 'lastname', 'email', 'phone', 'address');
+    //             }, 'subscriptionRequests', 'subscriptionRequests.customer'])
+    //             // if user exists in users table with vendor role 
+    //             ->whereHas('vendor')
+    //             ->where('vendor_id', auth()->user()->id);
+
+    //     $data = $data->get();
+    //     return $data;
+    // }
+
+    public function storeRequests()
     {
         $data = Store::select('id', 'name', 'description', 'address', 'store_type_id', 'vendor_id')
                 ->with(['storeType:id,name,slug', 'vendor' => function($query){
                     $query->select('id', 'firstname', 'lastname', 'email', 'phone', 'address');
-                }, 'pendingSubscriptionRequests', 'pendingSubscriptionRequests.customer'])
+                }, 'subscriptionRequests', 'subscriptionRequests.customer', 'unsubscriptionRequests', 'unsubscriptionRequests.customer'])
                 // if user exists in users table with vendor role 
                 ->whereHas('vendor')
                 ->where('vendor_id', auth()->user()->id);
@@ -114,14 +139,70 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
 
     public function acceptCustomerRequest($request)
     {
-        $data = StoreSubscription::query()
-                ->where('id', $request->input('store_subscription_id'))
-                ->whereHas('vendorStore')
-                ->whereHas('customer')
-                ->update([
-                    'is_accept' => 1
-                ]);
+        DB::beginTransaction();
 
+        $data = StoreSubscription::query()
+                ->where('id', $request->input('store_subscription_id')) // if store subscription id exist
+                ->whereHas('vendorStore') // store and vendor exist in store table
+                ->whereHas('customer'); // store subscription customer id exist in customer table
+
+        $data_ = clone $data;
+
+        if($request->input('type') == 'subscribe') {
+            $data = $data->where('is_accept', '0') // request does not have accept before
+                    ->where('unsubscribe', '0') // if not send any unsubscription request or not have unsubscribed
+                    ->update([
+                        'is_accept' => 1
+                    ]);
+            
+            if(!$data) DB::rollBack();
+
+            DB::commit();
+            return $data;
+        }
+
+        if($request->input('type') == 'unsubscribe') {
+            $data = $data->where('is_accept', '1') // check vendor has already accept customer request
+                    ->where('unsubscribe', '1') // if not send any unsubscription request or not have unsubscribed
+                    ->update([
+                        'unsubscribe' => '2'
+                    ]);
+            if(!$data) DB::rollBack();
+            
+            $data_ = $data_->where('unsubscribe', '2')->delete();
+            if(!$data_) DB::rollBack();
+
+            DB::commit();
+            return $data_;
+        }
+    }
+
+    public function rejectCustomerRequest($request)
+    {
+        DB::beginTransaction();
+
+        $data = StoreSubscription::query()
+                ->where('id', $request->input('store_subscription_id')) // if store subscription id exist
+                ->whereHas('vendorStore') // store and vendor exist in store table
+                ->whereHas('customer'); // store subscription customer id exist in customer table
+
+        if($request->input('type') == 'subscribe') {
+            $data = $data->where('is_accept', '0') // request does not have accept before
+                    ->where('unsubscribe', '0') // if not send any unsubscription request or not have unsubscribed
+                    ->delete();
+            if(!$data) DB::rollBack();
+        }
+
+        if($request->input('type') == 'unsubscribe') {
+            $data = $data->where('is_accept', '1') // request does not have accept before
+                    ->where('unsubscribe', '1') // if not send any unsubscription request or not have unsubscribed
+                    ->update([
+                        'unsubscribe' => '0'
+                    ]);
+            if(!$data) DB::rollBack();
+        }
+
+        DB::commit();
         return $data;
     }
 }

@@ -14,6 +14,7 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Repositories\AuthenticationRepository;
 use App\Repositories\PackageSubscriptionRepository;
 use App\Repositories\StoreRepository;
+use App\Repositories\PackageRepository;
 use App\Helper\APIresponse;
 
 /**
@@ -29,6 +30,7 @@ class AuthenticationsController extends Controller
     protected $repository;
     protected $packageSubscriptionRepository;
     protected $storeRepository;
+    protected $packageRepository;
 
     /**
      * AuthenticationsController constructor.
@@ -36,11 +38,12 @@ class AuthenticationsController extends Controller
      * @param AuthenticationRepository $repository
      * @param AuthenticationValidator $validator
      */
-    public function __construct(AuthenticationRepository $repository, PackageSubscriptionRepository $packageSubscriptionRepository, StoreRepository $storeRepository)
+    public function __construct(AuthenticationRepository $repository, PackageSubscriptionRepository $packageSubscriptionRepository, StoreRepository $storeRepository, PackageRepository $packageRepository)
     {
         $this->repository = $repository;
         $this->packageSubscriptionRepository = $packageSubscriptionRepository;
         $this->storeRepository = $storeRepository;
+        $this->packageRepository = $packageRepository;
     }
 
     /**
@@ -319,20 +322,24 @@ class AuthenticationsController extends Controller
             // And assigned the vendor role to the new user
             $registerVendor->assignRole('vendor');
 
+            // fetch selected package data from packages table
+            $package = $this->packageRepository->find($request->package_id);
+
             // vendor package subscription
             $packageSubscribed = $this->packageSubscriptionRepository->create([
-                'package_id' => $request->package_id,
-                'vendor_id' => $registerVendor->id
+                'package_id' => $package->id,
+                'vendor_id' => $registerVendor->id,
+                'customer_limit' => $package->customer_limit,
             ]);
 
             if($packageSubscribed)
             {
                 // After the successfull subscription, store will be created
                 $this->storeRepository->create([
-                    'name' => 'Store Name',
-                    'description' => "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                    'address' => $registerVendor->address ?? null,
-                    'category' => $request->category,
+                    'name' => $request->store_name,
+                    'description' => $request->store_description,
+                    'address' => $request->store_address,
+                    'category' => $request->store_category,
                     'vendor_id' => $packageSubscribed->vendor_id,
                     'package_subscription_id' => $packageSubscribed->id
                 ]);

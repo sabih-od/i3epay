@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StoreSubscription extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $fillable = ['store_id', 'customer_id', 'customer_store_password', 'is_accept'];
+    protected $fillable = ['store_id', 'customer_id', 'customer_store_password', 'is_accept', 'unsubscribe'];
 
     public function customer()
     {

@@ -13,6 +13,8 @@ use App\Http\Requests\CustomerSubscriptionCreateRequest;
 use App\Http\Requests\CustomerSubscriptionUpdateRequest;
 use App\Http\Requests\CustomerViewStorePasswordRequest;
 use App\Http\Requests\AcceptCustomerRequest;
+use App\Http\Requests\CustomerUnsubscriptionRequest;
+use App\Http\Requests\RejectCustomerRequest;
 use App\Repositories\StoreRepository;
 use App\Helper\APIresponse;
 use Illuminate\Support\Facades\Hash;
@@ -98,9 +100,34 @@ class StoresController extends Controller
 
             // customer subscribe to the store
             $data = $this->repository->customerStoreSubscribed($request);
+
+            // if not successfully send subscription request
+            if(!$data) return APIresponse::error("Incorrect subscription request!", []);
             
             // return response
-            return APIresponse::success('Subscribed successfully!', $data->toArray());
+            return APIresponse::success('Subscription request has been send to the store!', $data->toArray());
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    // for customer
+    public function storeUnsubscription(CustomerUnsubscriptionRequest $request)
+    {
+        try {
+            // first will check that this user is customer
+            $customer = auth()->user()->hasRole('customer');
+
+            if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
+
+            // customer subscribe to the store
+            $data = $this->repository->customerStoreUnsubscribed($request);
+
+            // if not successfully send unsubscription request
+            if(!$data) return APIresponse::error("Incorrect unsubscription request!", []);
+            
+            // return response
+            return APIresponse::success('Unsubscription request has been send to the store!', []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
@@ -144,11 +171,24 @@ class StoresController extends Controller
         }
     }
 
-    public function storeSubscriptionRequests()
+    // for vendor
+    // public function storeSubscriptionRequests()
+    // {
+    //     try {
+    //         // fetch subscription request list
+    //         $data = $this->repository->storeSubscriptionRequests();
+
+    //         // return response
+    //         return APIresponse::success('Subsciption requests fetched!', $data->toArray());
+    //     } catch (\Throwable $th) {
+    //         return APIresponse::error($th->getMessage(), []);
+    //     }
+    // }
+    public function storeRequests()
     {
-        try {
+            try {
             // fetch subscription request list
-            $data = $this->repository->storeSubscriptionRequests();
+            $data = $this->repository->storeRequests();
 
             // return response
             return APIresponse::success('Subsciption requests fetched!', $data->toArray());
@@ -157,14 +197,39 @@ class StoresController extends Controller
         }
     }
 
+    // for vendor
     public function acceptCustomerRequest(AcceptCustomerRequest $request)
     {
         try {
-            $data = $this->repository->acceptCustomerRequest($request);
-            if(!$data) return APIresponse::error('Request has wrong data ( store | customer )', []);
+            if($request->input('type') == 'subscribe' || $request->input('type') == 'unsubscribe')
+            {
+                $data = $this->repository->acceptCustomerRequest($request);
+                if(!$data) return APIresponse::error('Incorrect request!', []);
 
-            // return response
-            return APIresponse::success('Request has been accepted!', []);
+                // return response
+                return APIresponse::success('Request has been accepted!', []);
+            }
+
+            return APIresponse::error("Incorrect type!", []);
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    // for vendor
+    public function rejectCustomerRequest(RejectCustomerRequest $request)
+    {
+        try {
+            if($request->input('type') == 'subscribe' || $request->input('type') == 'unsubscribe')
+            {
+                $data = $this->repository->rejectCustomerRequest($request);
+                if(!$data) return APIresponse::error('Incorrect request!', []);
+
+                // return response
+                return APIresponse::success('Request has been accepted!', []);
+            }
+
+            return APIresponse::error("Incorrect type!", []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
