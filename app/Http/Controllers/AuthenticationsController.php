@@ -78,22 +78,8 @@ class AuthenticationsController extends Controller
      *             },
      *             @OA\Examples(example="result", value={
                     "msg": "Login successfully!",
-                    "data": {
-                        "access_token": "4|Iy6d8QjKfh7T5YGFP0wYBY4dgJxbKgK2pw6AOLDs",
-                        "token_type": "Bearer",
-                        "user": {
-                        "id": 3,
-                        "firstname": "Robert",
-                        "lastname": "William",
-                        "email": "robertwilliam@yopmail.com",
-                        "phone": null,
-                        "address": null,
-                        "_role": {
-                            "name": "customer",
-                            "laravel_through_key": 3
-                        }
-                        }
-                    }}, summary="An result object."),
+                    "data": {}
+                    }, summary="An result object."),
      *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
      *         )
      *     )
@@ -178,22 +164,7 @@ class AuthenticationsController extends Controller
      *             },
      *             @OA\Examples(example="result", value={
                         "msg": "Customer registered successfully!",
-                        "data": {
-                            "access_token": "3|f0xu0g6HB0NT1YBQNDiN2wTxdvYPvTjL3WnyjsHt",
-                            "token_type": "Bearer",
-                            "user": {
-                                "id": 7,
-                                "firstname": "New",
-                                "lastname": "Customer",
-                                "email": "newcustomer2@yopmail.com",
-                                "phone": "1234567890",
-                                "address": "Test Address",
-                                "_role": {
-                                    "name": "customer",
-                                    "laravel_through_key": 7
-                                }
-                            }
-                        }
+                        "data": {}
                     }, summary="An result object."),
      *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
      *         )
@@ -273,7 +244,27 @@ class AuthenticationsController extends Controller
      *                     property="package_id",
      *                     type="integer"
      *                 ),
-     *                 example={"firstname": "New", "lastname": "Vendor", "email": "newvendor@yopmail.com", "address": "Test Address", "password": "12345678", "category": "Grocery Store", "package_id": 1}
+     *                  @OA\Property(
+     *                     property="store_name",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_description",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_address",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_category",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="images[]",
+     *                     type="string"
+     *                 ),
+     *                 example={"firstname": "New", "lastname": "Vendor", "email": "newvendor@yopmail.com", "address": "Test Address", "password": "12345678", "category": "Grocery Store", "package_id": 1, "store_name": "Test store", "store_description": "Test Description", "store_address": "ABC address", "store_category": "Test Category", "images[]": ""}
      *             )
      *         )
      *     ),
@@ -286,22 +277,7 @@ class AuthenticationsController extends Controller
      *             },
      *             @OA\Examples(example="result", value={
                         "msg": "Vendor registered successfully!",
-                        "data": {
-                            "access_token": "5|xt25hgDmApEpqUlLheRtfTcRDcir9LT6FOSDt3fy",
-                            "token_type": "Bearer",
-                            "user": {
-                                "id": 8,
-                                "firstname": "New",
-                                "lastname": "Vendor",
-                                "email": "newvendor@yopmail.com",
-                                "phone": null,
-                                "address": "Test Address",
-                                "_role": {
-                                    "name": "vendor",
-                                    "laravel_through_key": 8
-                                }
-                            }
-                        }
+                        "data": {}
                     }, summary="An result object."),
      *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
      *         )
@@ -334,8 +310,8 @@ class AuthenticationsController extends Controller
 
             if($packageSubscribed)
             {
-                // After the successfull subscription, store will be created
-                $this->storeRepository->create([
+                // After the subscription, store will be created
+                $store = $this->storeRepository->create([
                     'name' => $request->store_name,
                     'description' => $request->store_description,
                     'address' => $request->store_address,
@@ -343,6 +319,18 @@ class AuthenticationsController extends Controller
                     'vendor_id' => $packageSubscribed->vendor_id,
                     'package_subscription_id' => $packageSubscribed->id
                 ]);
+
+                // add images
+                if($request->hasFile('images')){
+                    if(count($request->images) > 0)
+                        foreach ($request->images as $image) {
+                            if($image->isValid()) {
+                                $store
+                                ->addMedia($image)
+                                ->toMediaCollection('images', 'media');
+                            }       
+                        }
+                }
             }
 
             // find vendor from user table

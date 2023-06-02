@@ -41,7 +41,8 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
 
     public function allStores($request) 
     {
-        $data = Store::select('id', 'name', 'description', 'address', 'store_type_id', 'vendor_id')
+        $data = Store::query()
+        ->select('id', 'name', 'description', 'address', 'store_type_id', 'vendor_id')
         ->with(['storeType:id,name,slug', 'vendor' => function($query){
             $query->select('id', 'firstname', 'lastname', 'email', 'phone', 'address');
         }])
@@ -60,6 +61,22 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
         }
 
         $data = $data->get();
+
+        $data = $data->map(function($collect) {
+            return [
+                'id' => $collect['id'],
+                'name' => $collect['name'],
+                'description' => $collect['description'],
+                'address' => $collect['address'],
+                'store_type_id' => $collect['store_type_id'],
+                'vendor_id' => $collect['vendor_id'],
+                'store_type' => $collect['store_type'],
+                'vendor' => $collect['vendor'],
+                'images' => $collect->getMedia('images')->map(function($image){
+                    return $image->original_url;
+                })
+            ];
+        });
 
         return $data;
     }

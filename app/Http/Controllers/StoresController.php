@@ -15,9 +15,12 @@ use App\Http\Requests\CustomerViewStorePasswordRequest;
 use App\Http\Requests\AcceptCustomerRequest;
 use App\Http\Requests\CustomerUnsubscriptionRequest;
 use App\Http\Requests\RejectCustomerRequest;
+use App\Http\Requests\NewPackageSubscriptionRequest;
 use App\Repositories\StoreRepository;
+use App\Repositories\PackageRepository;
 use App\Helper\APIresponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class StoresController.
@@ -30,15 +33,17 @@ class StoresController extends Controller
      * @var StoreRepository
      */
     protected $repository;
+    protected $packageRepository;
 
     /**
      * StoresController constructor.
      *
      * @param StoreRepository $repository
      */
-    public function __construct(StoreRepository $repository)
+    public function __construct(StoreRepository $repository, PackageRepository $packageRepository)
     {
         $this->repository = $repository;
+        $this->packageRepository = $packageRepository;
     }
 
     /**
@@ -94,9 +99,9 @@ class StoresController extends Controller
     {
         try {
             // first will check that this user is customer
-            $customer = auth()->user()->hasRole('customer');
+            // $customer = auth()->user()->hasRole('customer');
 
-            if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
+            // if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
 
             // customer subscribe to the store
             $data = $this->repository->customerStoreSubscribed($request);
@@ -116,9 +121,9 @@ class StoresController extends Controller
     {
         try {
             // first will check that this user is customer
-            $customer = auth()->user()->hasRole('customer');
+            // $customer = auth()->user()->hasRole('customer');
 
-            if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
+            // if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
 
             // customer subscribe to the store
             $data = $this->repository->customerStoreUnsubscribed($request);
@@ -138,9 +143,9 @@ class StoresController extends Controller
     {
         try {
             // first will check that this user is customer
-            $customer = auth()->user()->hasRole('customer');
+            // $customer = auth()->user()->hasRole('customer');
 
-            if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
+            // if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
 
             // customer subscribe to the store
             $this->repository->customerUpdateStorePassword($request);
@@ -186,7 +191,7 @@ class StoresController extends Controller
     // }
     public function storeRequests()
     {
-            try {
+        try {
             // fetch subscription request list
             $data = $this->repository->storeRequests();
 
@@ -231,6 +236,45 @@ class StoresController extends Controller
 
             return APIresponse::error("Incorrect type!", []);
         } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    // for vendor
+    public function newPackageSubscription(NewPackageSubscriptionRequest $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            // check this package is not already selected
+            $verifyRequestedPackage = $this->packageRepository->verifyRequestedPackage($request);
+            if($verifyRequestedPackage) return APIresponse::error('The package has already been selected!', []);
+
+            // get the package customer limit
+            $customerLimit = $this->packageRepository->find($request->package_id)->customer_limit ?? 0;
+
+            // if new package has no customer limit
+            if($customerLimit == 0) return APIresponse::error('The new package has no limit on the number of customers!', []);
+
+            // get the total customer numbers from customer requests
+            $customerLimitUsage = $this->packageRepository->customerLimitUsage($request);
+
+            // if customer select the wrong package
+            if($customerLimitUsage >= $customerLimit) return APIresponse::error('We kindly request you to select the upgraded package!', []);
+
+            // destroy all previous packages
+            $this->packageRepository->destroyAllPreviousPackages($request);
+
+            // merged request
+            $request->merge(['customer_limit' => $customerLimit, 'customer_limit_usage' => $customerLimitUsage, 'vendor_id' => auth()->user()->id]);
+
+            // subscribe new package
+            $this->packageRepository->newPackageSubscribe($request);
+
+            DB::commit();
+            return APIresponse::error("The new package has been subscribed to successfully!", []);
+        } catch (\Throwable $th) {
+            DB::rollback();
             return APIresponse::error($th->getMessage(), []);
         }
     }

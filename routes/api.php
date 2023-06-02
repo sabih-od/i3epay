@@ -31,16 +31,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/change-password', [AuthenticationsController::class, 'changePassword']);
 
     // for customers
-    Route::post('/all-stores', [StoresController::class, 'allStores']);
-    Route::post('/store-subscription', [StoresController::class, 'storeSubscription']);
-    Route::put('/store-unsubscription', [StoresController::class, 'storeUnsubscription']);
-    Route::put('/update-store-password', [StoresController::class, 'updateStorePassword']);
-    Route::post('/view-store-password', [StoresController::class, 'viewStorePassword']);
-
+    Route::group(['middleware' => ['role:customer']], function () {
+        Route::post('/all-stores', [StoresController::class, 'allStores']);
+        Route::post('/store-subscription', [StoresController::class, 'storeSubscription']);
+        Route::put('/store-unsubscription', [StoresController::class, 'storeUnsubscription']);
+        Route::put('/update-store-password', [StoresController::class, 'updateStorePassword']);
+        Route::post('/view-store-password', [StoresController::class, 'viewStorePassword']);
+    });
+    
     // for vendors
-    // Route::get('/store-subscription-requests', [StoresController::class, 'storeSubscriptionRequests']);
-    Route::get('/store-requests', [StoresController::class, 'storeRequests']);
-    Route::post('/accept-customer-request', [StoresController::class, 'acceptCustomerRequest']);
-    Route::post('/reject-customer-request', [StoresController::class, 'rejectCustomerRequest']);
+    Route::group(['middleware' => ['role:vendor']], function () {
+        // Route::get('/store-subscription-requests', [StoresController::class, 'storeSubscriptionRequests']);
+        Route::get('/store-requests', [StoresController::class, 'storeRequests']);
+        Route::post('/accept-customer-request', [StoresController::class, 'acceptCustomerRequest']);
+        Route::post('/reject-customer-request', [StoresController::class, 'rejectCustomerRequest']);
+        Route::post('/new-package-subscription',  [StoresController::class, 'newPackageSubscription']);
+    });
     
 });

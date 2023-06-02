@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class Store extends Model
+class Store extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = ['name', 'description', 'address', 'category', 'store_type_id', 'vendor_id', 'package_subscription_id'];
 
@@ -46,5 +49,13 @@ class Store extends Model
                 ->select('id', 'store_id', 'customer_id')
                 ->where('is_accept', '1')
                 ->where('unsubscribe', '1');
+    }
+
+    public function vendorActivePackageSubscription()
+    {
+        return $this->hasMany(PackageSubscription::class, 'id', 'package_subscription_id')
+                ->select('id', 'package_id', 'vendor_id', 'customer_limit', 'customer_limit_usage', 'expiry_date', 'status')
+                ->where('vendor_id', auth()->user()->id)
+                ->where('status', 1);
     }
 }
