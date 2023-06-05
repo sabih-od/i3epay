@@ -36,13 +36,19 @@ class RegisterVendorRequest extends FormRequest
             'address' => ['required', 'max:255'],
             'password' => ['required', 'max:8', 'min:8'],
             'package_id' => 'required|exists:packages,id',
+
+            // store request details
+            'store_name' => ['required'],
+            'store_description' => ['required'],
+            'store_address' => ['required'],
+            'store_category' => ['required']
         ];
     }
 
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors()
-        ], 422));
-    }
+    // protected function failedValidation(Validator $validator)
+    // {
+    //     throw new HttpResponseException(response()->json([
+    //         'errors' => $validator->errors()
+    //     ], 422));
+    // }
 }

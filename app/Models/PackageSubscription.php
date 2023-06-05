@@ -20,6 +20,6 @@ class PackageSubscription extends Model implements Transformable
      *
      * @var array
      */
-    protected $fillable = ['package_id', 'vendor_id', 'status'];
+    protected $fillable = ['package_id', 'vendor_id', 'status', 'customer_limit', 'customer_limit_usage', 'expiry_date'];
 
 }

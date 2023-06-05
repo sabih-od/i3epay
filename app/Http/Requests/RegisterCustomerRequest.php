@@ -38,10 +38,10 @@ class RegisterCustomerRequest extends FormRequest
         ];
     }
 
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors()
-        ], 422));
-    }
+    // protected function failedValidation(Validator $validator)
+    // {
+    //     throw new HttpResponseException(response()->json([
+    //         'errors' => $validator->errors()
+    //     ], 422));
+    // }
 }

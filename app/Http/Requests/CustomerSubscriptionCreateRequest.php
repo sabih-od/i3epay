@@ -25,7 +25,11 @@ class CustomerSubscriptionCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'store_id' => [ 'required', 'exists:stores,id', Rule::unique('store_subscriptions', 'store_id')->where('customer_id', auth()->user()->id)]
+            'store_id' => [ 
+                'required', 
+                'exists:stores,id', 
+                Rule::unique('store_subscriptions', 'store_id')->where('customer_id', auth()->user()->id)->where('deleted_at', null)
+            ]
         ];
     }
 

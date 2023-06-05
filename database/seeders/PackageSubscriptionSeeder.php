@@ -19,6 +19,7 @@ class PackageSubscriptionSeeder extends Seeder
             'id' => 1,
             'package_id' => 1,
             'vendor_id' => 2,
+            'customer_limit' => 10,
             'status' => 1,
             'created_at' => now(),
             'updated_at' => now(),

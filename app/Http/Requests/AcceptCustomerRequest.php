@@ -24,7 +24,8 @@ class AcceptCustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'store_subscription_id' => 'required|exists:store_subscriptions,id'
+            'store_subscription_id' => 'required|exists:store_subscriptions,id',
+            'type' => 'required'
         ];
     }
 }

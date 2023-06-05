@@ -14,6 +14,7 @@ interface StoreRepository extends RepositoryInterface
 {
     public function allStores($request);
     public function customerStoreSubscribed($request);
-    public function storeSubscriptionRequests();
+    // public function storeSubscriptionRequests();
+    public function storeRequests();
     public function acceptCustomerRequest($request);
 }

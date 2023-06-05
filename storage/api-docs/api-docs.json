@@ -54,22 +54,7 @@
                                         "summary": "An result object.",
                                         "value": {
                                             "msg": "Login successfully!",
-                                            "data": {
-                                                "access_token": "4|Iy6d8QjKfh7T5YGFP0wYBY4dgJxbKgK2pw6AOLDs",
-                                                "token_type": "Bearer",
-                                                "user": {
-                                                    "id": 3,
-                                                    "firstname": "Robert",
-                                                    "lastname": "William",
-                                                    "email": "robertwilliam@yopmail.com",
-                                                    "phone": null,
-                                                    "address": null,
-                                                    "_role": {
-                                                        "name": "customer",
-                                                        "laravel_through_key": 3
-                                                    }
-                                                }
-                                            }
+                                            "data": []
                                         }
                                     },
                                     "bool": {
@@ -155,22 +140,7 @@
                                         "summary": "An result object.",
                                         "value": {
                                             "msg": "Customer registered successfully!",
-                                            "data": {
-                                                "access_token": "3|f0xu0g6HB0NT1YBQNDiN2wTxdvYPvTjL3WnyjsHt",
-                                                "token_type": "Bearer",
-                                                "user": {
-                                                    "id": 7,
-                                                    "firstname": "New",
-                                                    "lastname": "Customer",
-                                                    "email": "newcustomer2@yopmail.com",
-                                                    "phone": "1234567890",
-                                                    "address": "Test Address",
-                                                    "_role": {
-                                                        "name": "customer",
-                                                        "laravel_through_key": 7
-                                                    }
-                                                }
-                                            }
+                                            "data": []
                                         }
                                     },
                                     "bool": {
@@ -190,7 +160,7 @@
                 "operationId": "9ed58f67dba5fc4455698cda46d9f927",
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
                                     "firstname": {
@@ -220,6 +190,25 @@
                                     },
                                     "package_id": {
                                         "type": "integer"
+                                    },
+                                    "store_name": {
+                                        "type": "string"
+                                    },
+                                    "store_description": {
+                                        "type": "string"
+                                    },
+                                    "store_address": {
+                                        "type": "string"
+                                    },
+                                    "store_category": {
+                                        "type": "string"
+                                    },
+                                    "images[]": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
                                     }
                                 },
                                 "type": "object",
@@ -230,7 +219,12 @@
                                     "address": "Test Address",
                                     "password": "12345678",
                                     "category": "Grocery Store",
-                                    "package_id": 1
+                                    "package_id": 1,
+                                    "store_name": "Test store",
+                                    "store_description": "Test Description",
+                                    "store_address": "ABC address",
+                                    "store_category": "Test Category",
+                                    "images[]": ""
                                 }
                             }
                         }
@@ -253,22 +247,7 @@
                                         "summary": "An result object.",
                                         "value": {
                                             "msg": "Vendor registered successfully!",
-                                            "data": {
-                                                "access_token": "5|xt25hgDmApEpqUlLheRtfTcRDcir9LT6FOSDt3fy",
-                                                "token_type": "Bearer",
-                                                "user": {
-                                                    "id": 8,
-                                                    "firstname": "New",
-                                                    "lastname": "Vendor",
-                                                    "email": "newvendor@yopmail.com",
-                                                    "phone": null,
-                                                    "address": "Test Address",
-                                                    "_role": {
-                                                        "name": "vendor",
-                                                        "laravel_through_key": 8
-                                                    }
-                                                }
-                                            }
+                                            "data": []
                                         }
                                     },
                                     "bool": {
@@ -442,7 +421,550 @@
                                     "result": {
                                         "summary": "An result object.",
                                         "value": {
+                                            "msg": "",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/store-subscription": {
+            "post": {
+                "summary": "Store subscription",
+                "operationId": "8997da66336d2eba8681419d83766d24",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "store_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "store_id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
                                             "msg": "Fetched successfully!",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/store-unsubscription": {
+            "put": {
+                "summary": "Store unsubscription",
+                "operationId": "0b6f54ec68078d37c723fb66771289d4",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "store_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "store_id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/update-store-password": {
+            "put": {
+                "summary": "Update store password",
+                "operationId": "a64b424ada46d4380c4566e84f6fa319",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "store_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "customer_store_password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "store_id": 1,
+                                    "customer_store_password": 1234
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/view-store-password": {
+            "post": {
+                "summary": "View store password",
+                "operationId": "0c69e57e433061735b60d6acce477d48",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "store_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "store_id": 1,
+                                    "password": "test1234"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/store-requests": {
+            "get": {
+                "summary": "Store request list",
+                "operationId": "a398905e254f6b1e58443f2237fb8cae",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "Store request list fetched successfully!",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/accept-customer-request": {
+            "post": {
+                "summary": "Accept customer request",
+                "operationId": "380d891c4b822098fbe912e3f5d5813f",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "store_subscription_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "type": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "store_subscription_id": 1,
+                                    "type": "subscribe/unsubscribe"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reject-customer-request": {
+            "post": {
+                "summary": "Reject customer request",
+                "operationId": "6ecc63186ab4746b57af21059cef7ed2",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "store_subscription_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "type": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "store_subscription_id": 1,
+                                    "type": "subscribe/unsubscribe"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/new-package-subscription": {
+            "post": {
+                "summary": "New package subscription",
+                "operationId": "c911ca14dbc421dfc6f2ab7db5200f9b",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "store_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "package_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "store_id": 1,
+                                    "package_id": 2
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "",
                                             "data": []
                                         }
                                     },
