@@ -211,7 +211,7 @@ class AuthenticationsController extends Controller
      *     summary="Register Vendor",
      *     @OA\RequestBody(
      *         @OA\MediaType(
-     *             mediaType="application/json",
+     *             mediaType="multipart/form-data",
      *             @OA\Schema(
      *                 @OA\Property(
      *                     property="firstname",
@@ -262,9 +262,23 @@ class AuthenticationsController extends Controller
      *                 ),
      *                  @OA\Property(
      *                     property="images[]",
-     *                     type="string"
+     *                     type="array", 
+     *                      @OA\Items(type="string", format="binary")
      *                 ),
-     *                 example={"firstname": "New", "lastname": "Vendor", "email": "newvendor@yopmail.com", "address": "Test Address", "password": "12345678", "category": "Grocery Store", "package_id": 1, "store_name": "Test store", "store_description": "Test Description", "store_address": "ABC address", "store_category": "Test Category", "images[]": ""}
+     *                 example={
+     *                      "firstname": "New", 
+     *                      "lastname": "Vendor", 
+     *                      "email": "newvendor@yopmail.com", 
+     *                      "address": "Test Address", 
+     *                      "password": "12345678", 
+     *                      "category": "Grocery Store", 
+     *                      "package_id": 1, 
+     *                      "store_name": "Test store", 
+     *                      "store_description": "Test Description", 
+     *                      "store_address": "ABC address", 
+     *                      "store_category": "Test Category", 
+     *                      "images[]": ""
+     *                  }
      *             )
      *         )
      *     ),

@@ -75,7 +75,7 @@ class StoresController extends Controller
      *             oneOf={
      *                 @OA\Schema(type="boolean")
      *             },
-     *             @OA\Examples(example="result", value={"msg": "Fetched successfully!","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
      *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
      *         )
      *     )
@@ -95,6 +95,39 @@ class StoresController extends Controller
     }
 
     // for customer
+    /**
+     * @OA\Post(
+     *     path="/api/store-subscription",
+     *     summary="Store subscription",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_id": 1}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "Fetched successfully!","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
     public function storeSubscription(CustomerSubscriptionCreateRequest $request)
     {
         try {
@@ -117,6 +150,39 @@ class StoresController extends Controller
     }
 
     // for customer
+    /**
+     * @OA\Put(
+     *     path="/api/store-unsubscription",
+     *     summary="Store unsubscription",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_id": 1}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
     public function storeUnsubscription(CustomerUnsubscriptionRequest $request)
     {
         try {
@@ -139,6 +205,46 @@ class StoresController extends Controller
     }
 
     // for customer
+    /**
+     * @OA\Put(
+     *     path="/api/update-store-password",
+     *     summary="Update store password",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="customer_store_password",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_id": 1, "customer_store_password": 1234}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
     public function updateStorePassword(CustomerSubscriptionUpdateRequest $request)
     {
         try {
@@ -158,6 +264,46 @@ class StoresController extends Controller
     }
 
     // for customer
+    /**
+     * @OA\Post(
+     *     path="/api/view-store-password",
+     *     summary="View store password",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="password",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_id": 1, "password": "test1234"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
     public function viewStorePassword(CustomerViewStorePasswordRequest $request)
     {
         try {
@@ -189,6 +335,27 @@ class StoresController extends Controller
     //         return APIresponse::error($th->getMessage(), []);
     //     }
     // }
+    /**
+     * @OA\Get(
+     * path="/api/store-requests",
+     * summary="Store request list",
+     * security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={
+                        "msg": "Store request list fetched successfully!",
+                        "data": {}
+                    }, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+    */
     public function storeRequests()
     {
         try {
@@ -203,6 +370,46 @@ class StoresController extends Controller
     }
 
     // for vendor
+    /**
+     * @OA\Post(
+     *     path="/api/accept-customer-request",
+     *     summary="Accept customer request",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="store_subscription_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="type",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_subscription_id": 1, "type": "subscribe/unsubscribe"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
     public function acceptCustomerRequest(AcceptCustomerRequest $request)
     {
         try {
@@ -222,6 +429,46 @@ class StoresController extends Controller
     }
 
     // for vendor
+    /**
+     * @OA\Post(
+     *     path="/api/reject-customer-request",
+     *     summary="Reject customer request",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="store_subscription_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="type",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_subscription_id": 1, "type": "subscribe/unsubscribe"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */ 
     public function rejectCustomerRequest(RejectCustomerRequest $request)
     {
         try {
@@ -231,7 +478,7 @@ class StoresController extends Controller
                 if(!$data) return APIresponse::error('Incorrect request!', []);
 
                 // return response
-                return APIresponse::success('Request has been accepted!', []);
+                return APIresponse::success('Request has been rejected!', []);
             }
 
             return APIresponse::error("Incorrect type!", []);
@@ -241,6 +488,46 @@ class StoresController extends Controller
     }
 
     // for vendor
+    /**
+     * @OA\Post(
+     *     path="/api/new-package-subscription",
+     *     summary="New package subscription",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="package_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_id": 1, "package_id": 2}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
     public function newPackageSubscription(NewPackageSubscriptionRequest $request)
     {
         DB::beginTransaction();

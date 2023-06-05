@@ -31,7 +31,7 @@ class NewPackageSubscriptionRequest extends FormRequest
             ],
             'store_id' => [
                 'required', 
-                Rule::exists('stores', 'id')->where('vendor_id', auth()->user()->id)
+                Rule::exists('stores', 'id')->where('vendor_id', auth()->user()->id)->where('deleted_at', null)
             ], // if store exist with this vendor
         ];
     }
