@@ -63,7 +63,7 @@ class User extends Authenticatable
         return $this->hasOne(Store::class, 'vendor_id', 'id');
     }
 
-    public function customerStore()
+    public function customerSubscribedStore()
     {
         return $this->hasManyThrough(
             
@@ -73,6 +73,6 @@ class User extends Authenticatable
             'id',
             'id',
             'store_id'
-        );
+        )->where('is_accept', 1)->where('unsubscribe', 0);
     }
 }

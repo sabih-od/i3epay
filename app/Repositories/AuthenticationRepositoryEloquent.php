@@ -53,7 +53,7 @@ class AuthenticationRepositoryEloquent extends BaseRepository implements Authent
 
         if(auth()->user()->_role->name == 'customer')
         {
-            $data = $data->with(['customerStore']);
+            $data = $data->with(['customerSubscribedStore']);
         }
 
         $data = $data->first();
