@@ -29,6 +29,8 @@ Route::post('/register/vendor', [AuthenticationsController::class, 'registerVend
 Route::middleware('auth:sanctum')->group(function () {
     // all users
     Route::post('/change-password', [AuthenticationsController::class, 'changePassword']);
+    Route::post('/edit-profile', [AuthenticationsController::class, 'editProfile']);
+    Route::get('/show-profile', [AuthenticationsController::class, 'showProfile']);
 
     // for customers
     Route::group(['middleware' => ['role:customer']], function () {
