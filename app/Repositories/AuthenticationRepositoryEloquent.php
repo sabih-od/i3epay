@@ -49,6 +49,7 @@ class AuthenticationRepositoryEloquent extends BaseRepository implements Authent
                             $query->select('id', 'name', 'description', 'price', 'customer_limit');
                         }
                     ]);
+            
         }
 
         if(auth()->user()->_role->name == 'customer')
@@ -60,8 +61,16 @@ class AuthenticationRepositoryEloquent extends BaseRepository implements Authent
 
         if(auth()->user()->_role->name == 'vendor')
         {
-            $data->vendorStore->images = $data->vendorStore->getMedia('images')->map(function($image){
-                return $image->original_url;
+            $data->vendorStore->getMedia('images');
+
+            //     $data->vendorStore->images = $data->vendorStore->getMedia('images')->map(function($image){
+            //         return $image->original_url;
+            //     });
+        }
+        if(auth()->user()->_role->name == 'customer')
+        {
+            $data->customerSubscribedStore->map(function($collect){
+                $collect->getMedia('images');
             });
         }
 

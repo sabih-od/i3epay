@@ -565,4 +565,21 @@ class StoresController extends Controller
             return APIresponse::error($th->getMessage(), []);
         }
     }
+
+    // for vendor
+    public function removeStoreImage($uuid)
+    {
+        try {
+            // fetch subscription request list
+            $data = $this->repository->removeStoreImage($uuid);
+
+            if(!$data) return APIresponse::error("Image does not exist in your store!", []);
+
+            // return response
+            return APIresponse::success('Removed successfully!');
+            
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
 }

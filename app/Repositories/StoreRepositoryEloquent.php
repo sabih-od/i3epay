@@ -7,6 +7,7 @@ use Prettus\Repository\Criteria\RequestCriteria;
 use App\Repositories\StoreRepository;
 use App\Models\Store;
 use App\Models\StoreSubscription;
+use App\Models\User;
 use App\Validators\StoreValidator;
 use Illuminate\Support\Facades\DB;
 
@@ -220,6 +221,28 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
         }
 
         DB::commit();
+        return $data;
+    }
+
+    public function removeStoreImage($uuid)
+    {
+        $data = User::whereId(auth()->user()->id)
+                    // ->with(['vendorStore', 'vendorStore.media'])
+                    ->whereHas('vendorStore.media', function($query) use($uuid){
+                        $query->where('uuid', $uuid);
+                    })->first();
+
+        if($data)
+        {
+            // Find the media item by its UUID
+            $media = \Spatie\MediaLibrary\MediaCollections\Models\Media::where('uuid', $uuid)->first();
+
+            // Delete the media item
+            if ($media) {
+                $media->delete();
+            }
+        }
+
         return $data;
     }
 }

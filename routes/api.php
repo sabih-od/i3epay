@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/accept-customer-request', [StoresController::class, 'acceptCustomerRequest']);
         Route::post('/reject-customer-request', [StoresController::class, 'rejectCustomerRequest']);
         Route::post('/new-package-subscription',  [StoresController::class, 'newPackageSubscription']);
+        Route::get('/remove-store-image/{uuid}',  [StoresController::class, 'removeStoreImage']);
     });
     
 });

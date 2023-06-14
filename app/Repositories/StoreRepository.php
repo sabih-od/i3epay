@@ -17,4 +17,5 @@ interface StoreRepository extends RepositoryInterface
     // public function storeSubscriptionRequests();
     public function storeRequests();
     public function acceptCustomerRequest($request);
+    public function removeStoreImage($uuid);
 }

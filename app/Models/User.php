@@ -66,13 +66,12 @@ class User extends Authenticatable
     public function customerSubscribedStore()
     {
         return $this->hasManyThrough(
-            
             Store::class, 
             StoreSubscription::class,
             'customer_id', 
             'id',
             'id',
             'store_id'
-        )->where('is_accept', 1)->where('unsubscribe', 0);
+        )->where('is_accept', '1');
     }
 }
