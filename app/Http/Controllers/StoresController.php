@@ -141,6 +141,9 @@ class StoresController extends Controller
 
             // if not successfully send subscription request
             if(!$data) return APIresponse::error("Incorrect subscription request!", []);
+
+            // customer update the store password
+            $this->repository->customerUpdateStorePassword($request);
             
             // return response
             return APIresponse::success('Subscription request has been send to the store!', $data->toArray());
@@ -253,7 +256,7 @@ class StoresController extends Controller
 
             // if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
 
-            // customer subscribe to the store
+            // customer update the store password
             $this->repository->customerUpdateStorePassword($request);
             
             // return response
@@ -415,14 +418,19 @@ class StoresController extends Controller
         try {
             if($request->input('type') == 'subscribe' || $request->input('type') == 'unsubscribe')
             {
+                // check the store package limit
+                if(! $this->repository->customerLimitUsage($request))
+                    return APIresponse::error('Invalid request!', []);
+
+                // accept customer request
                 $data = $this->repository->acceptCustomerRequest($request);
-                if(!$data) return APIresponse::error('Incorrect request!', []);
+                if(!$data) return APIresponse::error('Invalid request!', []);
 
                 // return response
                 return APIresponse::success('Request has been accepted!', []);
             }
 
-            return APIresponse::error("Incorrect type!", []);
+            return APIresponse::error("Invalid type!", []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
@@ -475,13 +483,13 @@ class StoresController extends Controller
             if($request->input('type') == 'subscribe' || $request->input('type') == 'unsubscribe')
             {
                 $data = $this->repository->rejectCustomerRequest($request);
-                if(!$data) return APIresponse::error('Incorrect request!', []);
+                if(!$data) return APIresponse::error('Invalid request!', []);
 
                 // return response
                 return APIresponse::success('Request has been rejected!', []);
             }
 
-            return APIresponse::error("Incorrect type!", []);
+            return APIresponse::error("Invalid type!", []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
@@ -567,6 +575,31 @@ class StoresController extends Controller
     }
 
     // for vendor
+    /**
+     * @OA\Get(
+     * path="/api/remove-store-image/{uuid}",
+     * summary="Remove storage image",
+     * security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of the image to be removed",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+    */
     public function removeStoreImage($uuid)
     {
         try {

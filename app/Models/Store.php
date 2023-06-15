@@ -58,4 +58,9 @@ class Store extends Model implements HasMedia
                 ->where('vendor_id', auth()->user()->id)
                 ->where('status', 1);
     }
+
+    public function packageSubscription()
+    {
+        return $this->belongsTo(PackageSubscription::class, 'package_subscription_id', 'id');
+    }
 }

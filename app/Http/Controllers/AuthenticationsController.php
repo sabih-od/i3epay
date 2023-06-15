@@ -448,6 +448,100 @@ class AuthenticationsController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/edit-profile",
+     *     summary="Edit profile (Vendor / Customer)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="firstname",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 @OA\Property(
+     *                     property="lastname",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="address",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="phone",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 @OA\Property(
+     *                     property="store_name",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_description",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_address",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_category",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="images[]",
+     *                     type="array", 
+     *                      @OA\Items(type="string", format="binary")
+     *                 ),
+     *                 example={}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
     public function editProfile(EditProfileRequest $request)
     {
         try {
@@ -494,6 +588,25 @@ class AuthenticationsController extends Controller
         }
     }
 
+    // for both users ( vendor and customer )
+    /**
+     * @OA\Get(
+     * path="/api/show-profile",
+     * summary="Show profile",
+     * security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+    */
     public function showProfile()
     {
         try {
