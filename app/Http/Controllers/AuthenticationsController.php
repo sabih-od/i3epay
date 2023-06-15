@@ -11,6 +11,7 @@ use App\Http\Requests\RegisterCustomerRequest;
 use App\Http\Requests\RegisterVendorRequest;
 use App\Http\Requests\AttemptLoginRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\EditProfileRequest;
 use App\Repositories\AuthenticationRepository;
 use App\Repositories\PackageSubscriptionRepository;
 use App\Repositories\StoreRepository;
@@ -426,7 +427,7 @@ class AuthenticationsController extends Controller
     public function changePassword(ChangePasswordRequest $request)
     {
         try {
-            // If current password not corrent
+            // If current password not correct
             if(! auth()->user() || ! Hash::check($request->current_password, auth()->user()->password)) {
                 return response()->json(['current_password' => ['The current password are incorrect.']], 422);
             }
@@ -442,6 +443,178 @@ class AuthenticationsController extends Controller
             
             // Return the success reponse
             return APIresponse::success('Password changed successfully!', []);
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/edit-profile",
+     *     summary="Edit profile (Vendor / Customer)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="firstname",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 @OA\Property(
+     *                     property="lastname",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="address",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="phone",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 @OA\Property(
+     *                     property="store_name",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_description",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_address",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="store_category",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="images[]",
+     *                     type="array", 
+     *                      @OA\Items(type="string", format="binary")
+     *                 ),
+     *                 example={}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
+    public function editProfile(EditProfileRequest $request)
+    {
+        try {
+            // update user
+            $this->repository->update([
+                'firstname' => $request->firstname ?? null,
+                'lastname' => $request->lastname ?? null,
+                'address' => $request->address ?? null,
+                'phone' => $request->phone ?? null,
+                'firstname' => $request->firstname ?? null,
+            ], auth()->user()->id);
+
+            // if user role is vendor
+            if(auth()->user()->_role->name == 'vendor')
+            {
+                // update the store details
+                $this->storeRepository->update([
+                    'name' => $request->store_name ?? null,
+                    'description' => $request->store_description ?? null,
+                    'address' => $request->store_address ?? null,
+                    'category' => $request->store_category ?? null,
+                ], $request->store_id);
+                
+                // add images
+                if($request->hasFile('images')){
+
+                    // fetch store
+                    $store = $this->storeRepository->find($request->store_id);
+
+                    if(count($request->images) > 0)
+                        foreach ($request->images as $image) {
+                            if($image->isValid()) {
+                                $store
+                                ->addMedia($image)
+                                ->toMediaCollection('images', 'media');
+                            }       
+                        }
+                }
+            }
+
+            return APIresponse::success('Update successfully!', []);
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    // for both users ( vendor and customer )
+    /**
+     * @OA\Get(
+     * path="/api/show-profile",
+     * summary="Show profile",
+     * security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+    */
+    public function showProfile()
+    {
+        try {
+            // fetch subscription request list
+            $data = $this->repository->showProfile();
+
+            // return response
+            return APIresponse::success('Fetch successfully!', $data->toArray());
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }

@@ -29,6 +29,8 @@ Route::post('/register/vendor', [AuthenticationsController::class, 'registerVend
 Route::middleware('auth:sanctum')->group(function () {
     // all users
     Route::post('/change-password', [AuthenticationsController::class, 'changePassword']);
+    Route::post('/edit-profile', [AuthenticationsController::class, 'editProfile']);
+    Route::get('/show-profile', [AuthenticationsController::class, 'showProfile']);
 
     // for customers
     Route::group(['middleware' => ['role:customer']], function () {
@@ -46,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/accept-customer-request', [StoresController::class, 'acceptCustomerRequest']);
         Route::post('/reject-customer-request', [StoresController::class, 'rejectCustomerRequest']);
         Route::post('/new-package-subscription',  [StoresController::class, 'newPackageSubscription']);
+        Route::get('/remove-store-image/{uuid}',  [StoresController::class, 'removeStoreImage']);
     });
     
 });

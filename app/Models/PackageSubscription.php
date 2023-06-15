@@ -22,4 +22,9 @@ class PackageSubscription extends Model implements Transformable
      */
     protected $fillable = ['package_id', 'vendor_id', 'status', 'customer_limit', 'customer_limit_usage', 'expiry_date'];
 
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
+
 }

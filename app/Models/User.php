@@ -57,4 +57,21 @@ class User extends Authenticatable
             'role_id'
         )->where('model_has_roles.model_type', 'App\Models\User');
     }
+
+    public function vendorStore()
+    {
+        return $this->hasOne(Store::class, 'vendor_id', 'id');
+    }
+
+    public function customerSubscribedStore()
+    {
+        return $this->hasManyThrough(
+            Store::class, 
+            StoreSubscription::class,
+            'customer_id', 
+            'id',
+            'id',
+            'store_id'
+        )->where('is_accept', '1');
+    }
 }
