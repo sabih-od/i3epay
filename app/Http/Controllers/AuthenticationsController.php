@@ -12,11 +12,17 @@ use App\Http\Requests\RegisterVendorRequest;
 use App\Http\Requests\AttemptLoginRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\EditProfileRequest;
+use App\Http\Requests\ForgotPasswordRequest;
 use App\Repositories\AuthenticationRepository;
 use App\Repositories\PackageSubscriptionRepository;
 use App\Repositories\StoreRepository;
 use App\Repositories\PackageRepository;
 use App\Helper\APIresponse;
+use Illuminate\Support\Facades\Password;
+use App\Models\ResetCodePassword;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Traits\PHPCustomMail;
 
 /**
  * Class AuthenticationsController.
@@ -618,5 +624,80 @@ class AuthenticationsController extends Controller
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
+    }
+
+    // public function forgotPassword(ForgotPasswordRequest $request)
+    // {
+    //     try {
+    //         $status = Password::sendResetLink(
+    //             $request->only('email')
+    //         );
+         
+    //         return $status === Password::RESET_LINK_SENT
+    //                     ? APIresponse::success('Reset link send!!', $status)
+    //                     : APIresponse::error("Something went wrong!", $status);
+    //     } catch (\Throwable $th) {
+    //         return APIresponse::error($th->getMessage(), []);
+    //     }
+    // }
+
+    public function forgotPassword(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'email' => 'required|email|exists:users',
+            ]);
+    
+            // Delete all old code that user send before.
+            ResetCodePassword::where('email', $request->email)->delete();
+    
+            // Generate random code
+            $data['code'] = mt_rand(100000, 999999);
+    
+            // Create a new code
+            $codeData = ResetCodePassword::create($data);
+            $code = $codeData->code ?? '';
+            // robertwilliam@yopmail.com
+            $html = view('emails.send-code-reset-password', compact('code'))->render();
+
+            PHPCustomMail::customMail('Dev', $request->email, 'Forgot password code!', $html);
+
+            // return response
+            return APIresponse::success('Check the reset password code located in your email!', []);
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    public function codeCheck(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|exists:reset_code_passwords',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        // find the code
+        $passwordReset = ResetCodePassword::firstWhere('code', $request->code);
+
+        // check if it does not expired: the time is one hour
+        if ($passwordReset->created_at > now()->addHour()) {
+            $passwordReset->delete();
+            return APIresponse::error("Code has been expired!", []);
+        }
+
+        // find user's email 
+        $user = User::firstWhere('email', $passwordReset->email);
+
+        // Typo password converted into Hash format
+        $request->merge([ 'password' => Hash::make($request->password)]);
+
+        // update user password
+        $user->update($request->only('password'));
+
+        // delete current code 
+        $passwordReset->delete();
+
+        // return response
+        return APIresponse::success('Password has been successfully reset!', []);
     }
 }

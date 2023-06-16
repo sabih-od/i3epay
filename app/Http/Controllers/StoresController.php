@@ -567,7 +567,7 @@ class StoresController extends Controller
             $this->packageRepository->newPackageSubscribe($request);
 
             DB::commit();
-            return APIresponse::error("The new package has been subscribed to successfully!", []);
+            return APIresponse::success("The new package has been subscribed to successfully!", []);
         } catch (\Throwable $th) {
             DB::rollback();
             return APIresponse::error($th->getMessage(), []);
