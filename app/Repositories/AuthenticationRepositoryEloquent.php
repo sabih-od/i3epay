@@ -44,17 +44,18 @@ class AuthenticationRepositoryEloquent extends BaseRepository implements Authent
             $data = $data->with(['vendorStore' => function($query) {
                         $query->select('id', 'name', 'description', 'address', 'store_type_id', 'vendor_id', 'package_subscription_id');
                     }, 
-                        'vendorStore.vendorActivePackageSubscription', 
+                        // 'vendorStore.vendorActivePackageSubscription', 
                         'vendorStore.vendorActivePackageSubscription.package' => function($query) {
                             $query->select('id', 'name', 'description', 'price', 'customer_limit');
-                        }
+                        },
+                        'vendorStore.subscribedCustomers.customer'
                     ]);
             
         }
 
         if(auth()->user()->_role->name == 'customer')
         {
-            $data = $data->with(['customerSubscribedStore']);
+            // $data = $data->with(['customerSubscribedStore']);
         }
 
         $data = $data->first();

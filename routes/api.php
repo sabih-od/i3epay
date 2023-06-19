@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/change-password', [AuthenticationsController::class, 'changePassword']);
     Route::post('/edit-profile', [AuthenticationsController::class, 'editProfile']);
     Route::get('/show-profile', [AuthenticationsController::class, 'showProfile']);
+    Route::get('/transfer-history', [StoresController::class, 'transferHistory']);
 
     // for customers
     Route::group(['middleware' => ['role:customer']], function () {
@@ -68,6 +69,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reject-customer-request', [StoresController::class, 'rejectCustomerRequest']);
         Route::post('/new-package-subscription',  [StoresController::class, 'newPackageSubscription']);
         Route::get('/remove-store-image/{uuid}',  [StoresController::class, 'removeStoreImage']);
+        
+        Route::post('/store-amount', [StoresController::class, 'storeAmount']);
+        
     });
     
 });

@@ -63,4 +63,12 @@ class Store extends Model implements HasMedia
     {
         return $this->belongsTo(PackageSubscription::class, 'package_subscription_id', 'id');
     }
+
+    public function subscribedCustomers()
+    {
+        return $this->hasMany(StoreSubscription::class, 'store_id', 'id')
+                ->select('id', 'store_id', 'customer_id')
+                ->where('is_accept', '1') // is accept customer request
+                ->where('unsubscribe', '<>', '2'); // and not unsubscribed users
+    }
 }

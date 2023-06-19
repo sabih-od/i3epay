@@ -30,6 +30,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\CustomerSubscriptionRepository::class, \App\Repositories\CustomerSubscriptionRepositoryEloquent::class);
         $this->app->bind(\App\Repositories\PackageRepository::class, \App\Repositories\PackageRepositoryEloquent::class);
         $this->app->bind(\App\Repositories\PackageSubscriptionRepository::class, \App\Repositories\PackageSubscriptionRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\StoreBalanceRepository::class, \App\Repositories\StoreBalanceRepositoryEloquent::class);
+        $this->app->bind(\App\Repositories\TransferHistoryRepository::class, \App\Repositories\TransferHistoryRepositoryEloquent::class);
         //:end-bindings:
     }
 }
