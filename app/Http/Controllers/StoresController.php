@@ -16,8 +16,12 @@ use App\Http\Requests\AcceptCustomerRequest;
 use App\Http\Requests\CustomerUnsubscriptionRequest;
 use App\Http\Requests\RejectCustomerRequest;
 use App\Http\Requests\NewPackageSubscriptionRequest;
+use App\Http\Requests\StoreAmountRequest;
 use App\Repositories\StoreRepository;
 use App\Repositories\PackageRepository;
+use App\Repositories\StoreBalanceRepository;
+use App\Repositories\TransferHistoryRepository;
+
 use App\Helper\APIresponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -34,16 +38,20 @@ class StoresController extends Controller
      */
     protected $repository;
     protected $packageRepository;
+    protected $storeBalanceRepository;
+    protected $transferHistoryRepository;
 
     /**
      * StoresController constructor.
      *
      * @param StoreRepository $repository
      */
-    public function __construct(StoreRepository $repository, PackageRepository $packageRepository)
+    public function __construct(StoreRepository $repository, PackageRepository $packageRepository, StoreBalanceRepository $storeBalanceRepository, TransferHistoryRepository $transferHistoryRepository)
     {
         $this->repository = $repository;
         $this->packageRepository = $packageRepository;
+        $this->storeBalanceRepository = $storeBalanceRepository;
+        $this->transferHistoryRepository = $transferHistoryRepository;
     }
 
     /**
@@ -567,7 +575,7 @@ class StoresController extends Controller
             $this->packageRepository->newPackageSubscribe($request);
 
             DB::commit();
-            return APIresponse::error("The new package has been subscribed to successfully!", []);
+            return APIresponse::success("The new package has been subscribed to successfully!", []);
         } catch (\Throwable $th) {
             DB::rollback();
             return APIresponse::error($th->getMessage(), []);
@@ -611,6 +619,71 @@ class StoresController extends Controller
             // return response
             return APIresponse::success('Removed successfully!');
             
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    public function storeAmount(StoreAmountRequest $request)
+    {
+        try {
+            $payload = [
+                'store_id' => $request->store_id,
+                'customer_id' => $request->customer_id,
+                'vendor_id' => auth()->user()->id
+            ];
+
+            // find balance amount record
+            $storeBalance = $this->storeBalanceRepository->findWhere($payload)->first();
+
+            $payload['amount'] = $request->amount;
+
+            if( $storeBalance ) {
+                // update amount
+                $storeBalance->amount = $storeBalance->amount + $request->amount;
+                $storeBalance->save();
+
+                // create the transfer history
+                $this->transferHistoryRepository->create($payload);
+
+                // return response
+                return APIresponse::success('Transfered successfully!');
+            }
+
+            // create amount
+            $this->storeBalanceRepository->create($payload);
+
+            // create the transfer history
+            $this->transferHistoryRepository->create($payload);
+
+            // return response
+            return APIresponse::success('Transfered successfully!');
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    public function transferHistory()
+    {
+        try {
+            $data = $this->transferHistoryRepository;
+
+            if(auth()->user()->_role->name == 'vendor')
+            {
+                // fetch transfer history list 
+                $data = $data->with('customer')->findByField('vendor_id', auth()->user()->id);
+            }
+
+            if(auth()->user()->_role->name == 'customer')
+            { 
+                // fetch transfer history list
+                $data = $data->with('vendor')->findByField('customer_id', auth()->user()->id);
+            }
+
+            // return response
+            if($data->count() > 0) return APIresponse::success('Fetched successfully!', $data->toArray());
+
+            return APIresponse::error("Data not found!", []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
