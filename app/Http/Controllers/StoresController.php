@@ -119,7 +119,14 @@ class StoresController extends Controller
      *                     	   @OA\Schema(type="integer"),
      *                     }
      *                 ),
-     *                 example={"store_id": 1}
+     *                  @OA\Property(
+     *                     property="customer_store_password",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_id": 1, "customer_store_password": 1234}
      *             )
      *         )
      *     ),
@@ -624,6 +631,60 @@ class StoresController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/store-amount",
+     *     summary="Store amount",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                @OA\Property(
+     *                     property="customer_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="customer_store_password",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="amount",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"customer_id": 3, "customer_store_password": 1234, "store_id": 1, "amount": 50}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
     public function storeAmount(StoreAmountRequest $request)
     {
         try {
@@ -663,6 +724,24 @@ class StoresController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     * path="/api/transfer-history",
+     * summary="Transfer History",
+     * security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+    */
     public function transferHistory()
     {
         try {

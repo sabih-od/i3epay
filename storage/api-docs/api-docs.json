@@ -642,11 +642,22 @@
                                                 "type": "integer"
                                             }
                                         ]
+                                    },
+                                    "customer_store_password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
                                     }
                                 },
                                 "type": "object",
                                 "example": {
-                                    "store_id": 1
+                                    "store_id": 1,
+                                    "customer_store_password": 1234
                                 }
                             }
                         }
@@ -1182,6 +1193,140 @@
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": []
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/store-amount": {
+            "post": {
+                "summary": "Store amount",
+                "operationId": "39d2035a01e2f9225e9ebeef5ffcd9cf",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "customer_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "customer_store_password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "store_id": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    },
+                                    "amount": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "customer_id": 3,
+                                    "customer_store_password": 1234,
+                                    "store_id": 1,
+                                    "amount": 50
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "result": {
+                                        "summary": "An result object.",
+                                        "value": {
+                                            "msg": "",
+                                            "data": []
+                                        }
+                                    },
+                                    "bool": {
+                                        "summary": "A boolean value.",
+                                        "value": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/transfer-history": {
+            "get": {
+                "summary": "Transfer History",
+                "operationId": "7a4dd9913a984d541cf9f8785b6b5ef3",
                 "responses": {
                     "200": {
                         "description": "OK",
