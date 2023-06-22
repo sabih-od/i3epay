@@ -46,6 +46,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    // protected $appends = ['customer_new_store'];
+
     public function _role()
     {
         return $this->hasOneThrough(
@@ -73,5 +75,29 @@ class User extends Authenticatable
             'id',
             'store_id'
         )->where('is_accept', '1');
+    }
+
+    public function getCustomerNewStoreAttribute()
+    {
+        $store = collect([]);
+
+        $subscribedStoreIds = \App\Models\StoreSubscription::query()
+                                ->where('customer_id', auth()->user()->id)
+                                ->where('is_accept', '1')
+                                ->where('unsubscribe', '0')
+                                ->get()
+                                ->pluck('store_id')
+                                ->toArray();
+
+        if(count($subscribedStoreIds) > 0) {
+            $store = \App\Models\Store::query()->whereNotIn('id', $subscribedStoreIds)->get();
+
+            $store->map(function($collect){
+                $collect->getMedia('images');
+            });
+            
+        }
+
+        return $store;
     }
 }

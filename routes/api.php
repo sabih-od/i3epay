@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/edit-profile', [AuthenticationsController::class, 'editProfile']);
     Route::get('/show-profile', [AuthenticationsController::class, 'showProfile']);
     Route::get('/transfer-history', [StoresController::class, 'transferHistory']);
+    Route::post('/store-balance', [StoresController::class, 'storeBalance']);
 
     // for customers
     Route::group(['middleware' => ['role:customer']], function () {
@@ -71,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/remove-store-image/{uuid}',  [StoresController::class, 'removeStoreImage']);
         
         Route::post('/store-amount', [StoresController::class, 'storeAmount']);
+        Route::post('/deduct-amount', [StoresController::class, 'deductAmount']);
         
     });
-    
 });

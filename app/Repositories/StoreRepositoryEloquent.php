@@ -76,7 +76,8 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
                 'vendor' => $collect['vendor'],
                 'images' => $collect->getMedia('images')->map(function($image){
                     return $image->original_url;
-                })
+                }),
+                'is_subscribed' => $collect['is_subscribed']
             ];
         });
 

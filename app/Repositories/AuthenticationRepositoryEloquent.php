@@ -42,7 +42,7 @@ class AuthenticationRepositoryEloquent extends BaseRepository implements Authent
         if(auth()->user()->_role->name == 'vendor')
         {
             $data = $data->with(['vendorStore' => function($query) {
-                        $query->select('id', 'name', 'description', 'address', 'store_type_id', 'vendor_id', 'package_subscription_id');
+                        $query->select('id', 'name', 'description', 'address', 'category', 'store_type_id', 'vendor_id', 'package_subscription_id');
                     }, 
                         // 'vendorStore.vendorActivePackageSubscription', 
                         'vendorStore.vendorActivePackageSubscription.package' => function($query) {
@@ -55,7 +55,7 @@ class AuthenticationRepositoryEloquent extends BaseRepository implements Authent
 
         if(auth()->user()->_role->name == 'customer')
         {
-            // $data = $data->with(['customerSubscribedStore']);
+            $data = $data->with(['customerSubscribedStore']);
         }
 
         $data = $data->first();
@@ -75,6 +75,6 @@ class AuthenticationRepositoryEloquent extends BaseRepository implements Authent
             });
         }
 
-        return $data;
+        return $data->append('customer_new_store');
     }
 }
