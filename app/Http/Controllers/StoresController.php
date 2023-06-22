@@ -17,6 +17,8 @@ use App\Http\Requests\CustomerUnsubscriptionRequest;
 use App\Http\Requests\RejectCustomerRequest;
 use App\Http\Requests\NewPackageSubscriptionRequest;
 use App\Http\Requests\StoreAmountRequest;
+use App\Http\Requests\StoreBalanceRequest;
+use App\Http\Requests\DeductAmountRequest;
 use App\Repositories\StoreRepository;
 use App\Repositories\PackageRepository;
 use App\Repositories\StoreBalanceRepository;
@@ -695,30 +697,166 @@ class StoresController extends Controller
             ];
 
             // find balance amount record
-            $storeBalance = $this->storeBalanceRepository->findWhere($payload)->first();
+            $data = $this->storeBalanceRepository->findWhere($payload)->first();
 
             $payload['amount'] = $request->amount;
 
-            if( $storeBalance ) {
+            if( $data ) {
                 // update amount
-                $storeBalance->amount = $storeBalance->amount + $request->amount;
-                $storeBalance->save();
+                $data->amount = $data->amount + $request->amount;
+                $data->save();
 
                 // create the transfer history
                 $this->transferHistoryRepository->create($payload);
 
                 // return response
-                return APIresponse::success('Transfered successfully!');
+                return APIresponse::success('Transfered successfully!', $data->toArray());
             }
 
             // create amount
-            $this->storeBalanceRepository->create($payload);
+            $data = $this->storeBalanceRepository->create($payload);
 
             // create the transfer history
             $this->transferHistoryRepository->create($payload);
 
             // return response
-            return APIresponse::success('Transfered successfully!');
+            return APIresponse::success('Transfered successfully!', $data->toArray());
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/deduct-amount",
+     *     summary="Deduct amount",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                @OA\Property(
+     *                     property="customer_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="customer_store_password",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                  @OA\Property(
+     *                     property="amount",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"customer_id": 3, "customer_store_password": 1234, "store_id": 1, "amount": 50}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
+    public function deductAmount(DeductAmountRequest $request)
+    {
+        try {
+            $payload = [
+                'store_id' => $request->store_id,
+                'customer_id' => $request->customer_id,
+                'vendor_id' => auth()->user()->id
+            ];
+
+            // find balance amount record
+            $data = $this->storeBalanceRepository->findWhere($payload)->first();
+
+            $payload['amount'] = $request->amount;
+
+            if( $data ) {
+                if($data->amount < $request->amount) return APIresponse::error("You've insufficient balance!", []);
+
+                // update amount
+                $data->amount = $data->amount - $request->amount;
+                $data->save();
+
+                // return response
+                return APIresponse::success('Deducted successfully!', $data->toArray());
+            }
+
+        } catch (\Throwable $th) {
+            return APIresponse::error($th->getMessage(), []);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/store-balance",
+     *     summary="Store balance",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="store_id",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_id": 1}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             oneOf={
+     *                 @OA\Schema(type="boolean")
+     *             },
+     *             @OA\Examples(example="result", value={"msg": "","data": {}}, summary="An result object."),
+     *             @OA\Examples(example="bool", value=false, summary="A boolean value."),
+     *         )
+     *     )
+     * )
+     */
+    public function storeBalance(StoreBalanceRequest $request)
+    {
+        try {
+            $payload = [];
+            $payload['store_id'] = $request->store_id;
+            
+            if(auth()->user()->_role->name == 'vendor') $payload['vendor_id'] = auth()->user()->id;
+            if(auth()->user()->_role->name == 'customer') $payload['customer_id'] = auth()->user()->id;
+
+            // find balance amount record
+            $data = $this->storeBalanceRepository->findWhere($payload)->first();
+
+            // return response
+            return APIresponse::success('Fetched successfully!', $data->toArray());
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
@@ -762,7 +900,7 @@ class StoresController extends Controller
             // return response
             if($data->count() > 0) return APIresponse::success('Fetched successfully!', $data->toArray());
 
-            return APIresponse::error("Data not found!", []);
+            return APIresponse::success("Data not found!", []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }

@@ -14,6 +14,8 @@ class Store extends Model implements HasMedia
 
     protected $fillable = ['name', 'description', 'address', 'category', 'store_type_id', 'vendor_id', 'package_subscription_id'];
 
+    // protected $appends = ['is_subscribed'];
+
     public function storeType()
     {
         return $this->belongsTo(StoreType::class);
@@ -70,5 +72,26 @@ class Store extends Model implements HasMedia
                 ->select('id', 'store_id', 'customer_id')
                 ->where('is_accept', '1') // is accept customer request
                 ->where('unsubscribe', '<>', '2'); // and not unsubscribed users
+    }
+
+    // public function storeBalance()
+    // {
+    //     $relation = $this->hasOne(StoreBalance::class)
+    //                     ->select('id', 'store_id', 'customer_id', 'vendor_id', 'amount');
+
+    //     if(auth()->user()->_role->name == 'vendor') $relation = $relation->where('vendor_id', auth()->user()->id);
+
+    //     if(auth()->user()->_role->name == 'customer') $relation = $relation->where('customer_id', auth()->user()->id);
+        
+    //     return $relation;
+    // }
+
+    public function getIsSubscribedAttribute()
+    {
+        $data = \App\Models\StoreSubscription::query()->where('store_id', $this->id)->where('customer_id', auth()->user()->id)->where('is_accept', '1')->where('unsubscribe', '0')->first();
+
+        if($data) return true;
+        
+        return false;
     }
 }

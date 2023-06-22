@@ -35,8 +35,10 @@ class StoreAmountRequest extends FormRequest
                                 
                             // check subscription exist with this customer
                             Rule::exists('store_subscriptions', 'store_id')
-                                ->where('customer_id', $this->customer_id)
-                                ->where('customer_store_password', $this->customer_store_password)
+                                ->where('customer_id', $this->customer_id) // verify customer id
+                                ->where('customer_store_password', $this->customer_store_password) // verify store password
+                                ->where('is_accept', '1') // is accept customer request
+                                ->where('unsubscribe', '0') // and not have unsubscribe request
                                 ->where('deleted_at', null)
                         ],
             'amount' => 'required',
