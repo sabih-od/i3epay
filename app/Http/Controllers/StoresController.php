@@ -860,7 +860,7 @@ class StoresController extends Controller
                 $payload['vendor_id'] = auth()->user()->id;
 
                 // find balance amount record
-                $data = $this->storeBalanceRepository->findWhere($payload)->get();
+                $data = $this->storeBalanceRepository->findWhere($payload);
             }
             if(auth()->user()->_role->name == 'customer') {
                 $payload['customer_id'] = auth()->user()->id;
@@ -869,8 +869,9 @@ class StoresController extends Controller
                 $data = $this->storeBalanceRepository->findWhere($payload)->first();
             }
 
+
             // return response
-            return APIresponse::success('Fetched successfully!', ($data) ? $data->toArray() : []);
+            return APIresponse::success('Fetched successfully!', $data->toArray());
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
