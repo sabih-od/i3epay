@@ -89,14 +89,17 @@ class User extends Authenticatable
                                 ->pluck('store_id')
                                 ->toArray();
 
-        if(count($subscribedStoreIds) > 0) {
-            $store = \App\Models\Store::query()->whereNotIn('id', $subscribedStoreIds)->get();
+        $store = \App\Models\Store::query();
 
-            $store->map(function($collect){
-                $collect->getMedia('images');
-            });
-            
+        if(count($subscribedStoreIds) > 0) {
+            $store = $store->whereNotIn('id', $subscribedStoreIds);            
         }
+
+        $store = $store->get();
+
+        $store->map(function($collect){
+            $collect->getMedia('images');
+        });
 
         return $store;
     }
