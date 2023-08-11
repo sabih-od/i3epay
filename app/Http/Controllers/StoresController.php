@@ -856,11 +856,18 @@ class StoresController extends Controller
             $payload = [];
             $payload['store_id'] = $request->store_id;
             
-            if(auth()->user()->_role->name == 'vendor') $payload['vendor_id'] = auth()->user()->id;
-            if(auth()->user()->_role->name == 'customer') $payload['customer_id'] = auth()->user()->id;
+            if(auth()->user()->_role->name == 'vendor') {
+                $payload['vendor_id'] = auth()->user()->id;
 
-            // find balance amount record
-            $data = $this->storeBalanceRepository->findWhere($payload)->first();
+                // find balance amount record
+                $data = $this->storeBalanceRepository->findWhere($payload)->get();
+            }
+            if(auth()->user()->_role->name == 'customer') {
+                $payload['customer_id'] = auth()->user()->id;
+
+                // find balance amount record
+                $data = $this->storeBalanceRepository->findWhere($payload)->first();
+            }
 
             // return response
             return APIresponse::success('Fetched successfully!', ($data) ? $data->toArray() : []);
