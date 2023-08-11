@@ -95,12 +95,15 @@ class StoreRepositoryEloquent extends BaseRepository implements StoreRepository
         return $data;
     }
 
-    public function customerStoreUnsubscribed()
+    public function customerStoreUnsubscribed($request)
     {
         // customer send to the unsubscription request to the store
-        $data = StoreSubscription::where('is_accept', '1')->where('unsubscribe', '0')->update([
-            'unsubscribe' => '1'
-        ]);
+        $data = StoreSubscription::where('is_accept', '1')
+                    ->where('unsubscribe', '0')
+                    ->where('customer_store_password', $request->input('customer_store_password'))
+                    ->update([
+                        'unsubscribe' => '1'
+                    ]);
 
         return $data;
     }

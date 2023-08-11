@@ -51,6 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/edit-profile', [AuthenticationsController::class, 'editProfile']);
     Route::get('/show-profile', [AuthenticationsController::class, 'showProfile']);
     Route::get('/transfer-history', [StoresController::class, 'transferHistory']);
+
+    // used for both users (vendor & client)
     Route::post('/store-balance', [StoresController::class, 'storeBalance']);
 
     // for customers

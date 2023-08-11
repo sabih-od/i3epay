@@ -717,11 +717,22 @@
                                                 "type": "integer"
                                             }
                                         ]
+                                    },
+                                    "customer_store_password": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "integer"
+                                            }
+                                        ]
                                     }
                                 },
                                 "type": "object",
                                 "example": {
-                                    "store_id": 1
+                                    "store_id": 1,
+                                    "customer_store_password": 1234
                                 }
                             }
                         }

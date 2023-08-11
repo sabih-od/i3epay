@@ -186,7 +186,14 @@ class StoresController extends Controller
      *                     	   @OA\Schema(type="integer"),
      *                     }
      *                 ),
-     *                 example={"store_id": 1}
+     *                  @OA\Property(
+     *                     property="customer_store_password",
+     *                     oneOf={
+     *                     	   @OA\Schema(type="string"),
+     *                     	   @OA\Schema(type="integer"),
+     *                     }
+     *                 ),
+     *                 example={"store_id": 1, "customer_store_password": 1234}
      *             )
      *         )
      *     ),
@@ -856,7 +863,7 @@ class StoresController extends Controller
             $data = $this->storeBalanceRepository->findWhere($payload)->first();
 
             // return response
-            return APIresponse::success('Fetched successfully!', $data->toArray());
+            return APIresponse::success('Fetched successfully!', ($data) ? $data->toArray() : []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
