@@ -861,17 +861,20 @@ class StoresController extends Controller
 
                 // find balance amount record
                 $data = $this->storeBalanceRepository->findWhere($payload);
+                
+                return APIresponse::success('Fetched successfully!', $data ? $data->toArray() : []);
             }
             if(auth()->user()->_role->name == 'customer') {
                 $payload['customer_id'] = auth()->user()->id;
 
                 // find balance amount record
                 $data = $this->storeBalanceRepository->findWhere($payload)->first();
+                
+                // return response
+                return APIresponse::success('Fetched successfully!', $data ? $data : []);
             }
 
-
-            // return response
-            return APIresponse::success('Fetched successfully!', $data->toArray());
+            
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
