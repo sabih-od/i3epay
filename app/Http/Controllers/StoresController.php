@@ -23,10 +23,14 @@ use App\Repositories\StoreRepository;
 use App\Repositories\PackageRepository;
 use App\Repositories\StoreBalanceRepository;
 use App\Repositories\TransferHistoryRepository;
+use App\Repositories\AuthenticationRepository;
 
 use App\Helper\APIresponse;
+use App\Helper\Helper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Models\StoreSubscription;
+use App\Models\User;
 
 /**
  * Class StoresController.
@@ -148,11 +152,6 @@ class StoresController extends Controller
     public function storeSubscription(CustomerSubscriptionCreateRequest $request)
     {
         try {
-            // first will check that this user is customer
-            // $customer = auth()->user()->hasRole('customer');
-
-            // if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
-
             // customer subscribe to the store
             $data = $this->repository->customerStoreSubscribed($request);
 
@@ -161,6 +160,12 @@ class StoresController extends Controller
 
             // customer update the store password
             $this->repository->customerUpdateStorePassword($request);
+
+            // find store
+            $store = $this->repository->find($request->input('store_id'));
+
+            // send the store subscription notification to the vendor
+            Helper::sendUserNotification($store->vendor, "You've received the new store subscription request from " . Helper::name());
             
             // return response
             return APIresponse::success('Subscription request has been send to the store!', $data->toArray());
@@ -213,16 +218,17 @@ class StoresController extends Controller
     public function storeUnsubscription(CustomerUnsubscriptionRequest $request)
     {
         try {
-            // first will check that this user is customer
-            // $customer = auth()->user()->hasRole('customer');
-
-            // if(!$customer) return APIresponse::error("You don't exist in customer list!", []);
-
             // customer subscribe to the store
             $data = $this->repository->customerStoreUnsubscribed($request);
 
+            // find store
+            $store = $this->repository->find($request->input('store_id'));
+
             // if not successfully send unsubscription request
             if(!$data) return APIresponse::error("Incorrect unsubscription request!", []);
+
+            // send the store subscription notification to the vendor
+            Helper::sendUserNotification($store->vendor, "You've received the new store un-subscription request from " . Helper::name());
             
             // return response
             return APIresponse::success('Unsubscription request has been send to the store!', []);
@@ -440,6 +446,9 @@ class StoresController extends Controller
     public function acceptCustomerRequest(AcceptCustomerRequest $request)
     {
         try {
+            // find store subscription
+            $storeSubscription = StoreSubscription::query()->find($request->input('store_subscription_id'));
+
             if($request->input('type') == 'subscribe' || $request->input('type') == 'unsubscribe')
             {
                 // check the store package limit
@@ -449,6 +458,9 @@ class StoresController extends Controller
                 // accept customer request
                 $data = $this->repository->acceptCustomerRequest($request);
                 if(!$data) return APIresponse::error('Invalid request!', []);
+
+                // send the accept subscription or unsubscription request notification to the customer 
+                Helper::sendUserNotification($storeSubscription->customer, "Your ". $storeSubscription->store->name . " store " . $request->input('type') . " request has been accepted!");
 
                 // return response
                 return APIresponse::success('Request has been accepted!', []);
@@ -506,8 +518,14 @@ class StoresController extends Controller
         try {
             if($request->input('type') == 'subscribe' || $request->input('type') == 'unsubscribe')
             {
+                // find store subscription
+                $storeSubscription = StoreSubscription::query()->find($request->input('store_subscription_id'));
+                
                 $data = $this->repository->rejectCustomerRequest($request);
                 if(!$data) return APIresponse::error('Invalid request!', []);
+
+                // send the accept subscription or unsubscription request notification to the customer 
+                Helper::sendUserNotification($storeSubscription->customer, "Your ". $storeSubscription->store->name . " store " . $request->input('type') . " request has been rejected!");
 
                 // return response
                 return APIresponse::success('Request has been rejected!', []);
@@ -708,6 +726,12 @@ class StoresController extends Controller
 
             $payload['amount'] = $request->amount;
 
+            // find store
+            $store = $this->repository->find($request->store_id);
+
+            //find customer
+            $customer = User::query()->find($request->customer_id);
+
             if( $data ) {
                 // update amount
                 $data->amount = $data->amount + $request->amount;
@@ -715,6 +739,9 @@ class StoresController extends Controller
 
                 // create the transfer history
                 $this->transferHistoryRepository->create($payload);
+
+                // send the add amount notification to the customer
+                if($store) Helper::sendUserNotification($customer, "You've added the new amount " . $request->amount . " in " . $store->name . " store!");
 
                 // return response
                 return APIresponse::success('Transfered successfully!', $data->toArray());
@@ -725,6 +752,9 @@ class StoresController extends Controller
 
             // create the transfer history
             $this->transferHistoryRepository->create($payload);
+
+            // send the add amount notification to the customer
+            if($store) Helper::sendUserNotification($customer, "You've added the new amount " . $request->amount . "in " . $store->name . " store!");
 
             // return response
             return APIresponse::success('Transfered successfully!', $data->toArray());
@@ -801,12 +831,21 @@ class StoresController extends Controller
 
             $payload['amount'] = $request->amount;
 
+            // find store
+            $store = $this->repository->find($request->store_id);
+
+            //find customer
+            $customer = User::query()->find($request->customer_id);
+
             if( $data ) {
                 if($data->amount < $request->amount) return APIresponse::error("You've insufficient balance!", []);
 
                 // update amount
                 $data->amount = $data->amount - $request->amount;
                 $data->save();
+
+                 // send the add amount notification to the customer
+                if($store) Helper::sendUserNotification($customer, $store->name . " store has deduct ".$request->amount. " amount from your account!");
 
                 // return response
                 return APIresponse::success('Deducted successfully!', $data->toArray());
