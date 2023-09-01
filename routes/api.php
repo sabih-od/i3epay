@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenticationsController;
 use App\Http\Controllers\SetupsController;
 use App\Http\Controllers\StoresController;
+use App\Http\Controllers\NotificationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // used for both users (vendor & client)
     Route::post('/store-balance', [StoresController::class, 'storeBalance']);
+
+    // notifications
+    Route::get('unread-notifications', [NotificationsController::class, 'getUnreadNotifications']);
+    Route::post('read-notifications', [NotificationsController::class, 'readNotifications']);
 
     // for customers
     Route::group(['middleware' => ['role:customer']], function () {

@@ -530,6 +530,60 @@
                 ]
             }
         },
+        "/api/unread-notifications": {
+            "get": {
+                "summary": "Get unread notifications",
+                "operationId": "8522e9ec60b50f54746f919f0f7ac01c",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/read-notifications": {
+            "post": {
+                "summary": "Read notifications",
+                "operationId": "73f40fd821a3527911a488734b270aae",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/setup": {
             "get": {
                 "summary": "Setup Api (open api) to get misc things like packages detail etc.",
