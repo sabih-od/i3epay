@@ -202,7 +202,7 @@ class AuthenticationsController extends Controller
             ->first();
 
             // Return the success reponse
-            return APIresponse::success('Customer registered successfully!', [
+            return APIresponse::success('User registered successfully!', [
                 'access_token' => $user->createToken('Personal Access Token')->plainTextToken,
                 'token_type' => 'Bearer',
                 'user' => $user
@@ -368,7 +368,7 @@ class AuthenticationsController extends Controller
             DB::commit();
 
             // return response
-            return APIresponse::success('Vendor registered successfully!', [
+            return APIresponse::success('Store Owner registered successfully!', [
                 'access_token' => $user->createToken('Personal Access Token')->plainTextToken,
                 'token_type' => 'Bearer',
                 'user' => $user

@@ -156,7 +156,7 @@ class StoresController extends Controller
             $data = $this->repository->customerStoreSubscribed($request);
 
             // if not successfully send subscription request
-            if(!$data) return APIresponse::error("Incorrect subscription request!", []);
+            if(!$data) return APIresponse::error("Incorrect add store request request!", []);
 
             // customer update the store password
             $this->repository->customerUpdateStorePassword($request);
@@ -165,10 +165,10 @@ class StoresController extends Controller
             $store = $this->repository->find($request->input('store_id'));
 
             // send the store subscription notification to the vendor
-            Helper::sendUserNotification($store->vendor, "You've received the new store subscription request from " . Helper::name());
+            Helper::sendUserNotification($store->vendor, "You've received the new add store request from " . Helper::name());
             
             // return response
-            return APIresponse::success('Subscription request has been send to the store!', $data->toArray());
+            return APIresponse::success('Add store request request has been send to the store!', $data->toArray());
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
@@ -225,13 +225,13 @@ class StoresController extends Controller
             $store = $this->repository->find($request->input('store_id'));
 
             // if not successfully send unsubscription request
-            if(!$data) return APIresponse::error("Incorrect unsubscription request!", []);
+            if(!$data) return APIresponse::error("Incorrect remove store request request!", []);
 
             // send the store subscription notification to the vendor
-            Helper::sendUserNotification($store->vendor, "You've received the new store un-subscription request from " . Helper::name());
+            Helper::sendUserNotification($store->vendor, "You've received the remove store request from " . Helper::name());
             
             // return response
-            return APIresponse::success('Unsubscription request has been send to the store!', []);
+            return APIresponse::success('Remove store request has been send to the store!', []);
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
@@ -396,7 +396,7 @@ class StoresController extends Controller
             $data = $this->repository->storeRequests();
 
             // return response
-            return APIresponse::success('Subsciption requests fetched!', $data->toArray());
+            return APIresponse::success('Add store requests fetched!', $data->toArray());
         } catch (\Throwable $th) {
             return APIresponse::error($th->getMessage(), []);
         }
@@ -591,7 +591,7 @@ class StoresController extends Controller
             $customerLimit = $this->packageRepository->find($request->package_id)->customer_limit ?? 0;
 
             // if new package has no customer limit
-            if($customerLimit == 0) return APIresponse::error('The new package has no limit on the number of customers!', []);
+            if($customerLimit == 0) return APIresponse::error('The new package has no limit on the number of users!', []);
 
             // get the total customer numbers from customer requests
             $customerLimitUsage = $this->packageRepository->customerLimitUsage($request);
